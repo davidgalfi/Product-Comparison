@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'create' %}Add New Object{% else %}Edit Object{% endif %} - {{ analysis.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ url_for('view_analysis', analysis_id=analysis.id) }}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Analysis
+                </a>
+                <div>
+                    <h1 class="h2 mb-0">
+                        {% if mode == 'create' %}Add New Object{% else %}Edit Object{% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">{{ analysis.name }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <form method="POST" id="objectForm" class="glass-card p-4">
+                <!-- Basic Object Info -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="objectName" name="object_name" 
+                                   value="{{ object.object_name if object else '' }}" required>
+                            <label for="objectName">Object Name *</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="brand" name="brand" 
+                                   value="{{ object.brand if object else '' }}">
+                            <label for="brand">Brand</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="floating-label">
+                        <input type="url" class="form-control" id="imageUrl" name="image_url" 
+                               value="{{ object.image_url if object else '' }}">
+                        <label for="imageUrl">Image URL (Optional)</label>
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Provide a URL to an image for this object
+                    </small>
+                </div>
+
+                <!-- Dynamic Fields -->
+                {% if fields %}
+                <div class="custom-fields">
+                    <h4 class="gradient-text mb-4">
+                        <i class="bi bi-sliders me-2"></i>Custom Properties
+                    </h4>
+                    
+                    {% for field in fields %}
+                    <div class="mb-3 field-input" data-field-id="{{ field.id }}">
+                        <label class="form-label fw-semibold">
+                            {{ field.field_name }}
+                            {% if field.is_required %}<span class="text-danger">*</span>{% endif %}
+                            {% if field.field_unit %}
+                                <span class="badge bg-info ms-1">{{ field.field_unit }}</span>
+                            {% endif %}
+                        </label>
+                        
+                        {% set field_value = object_values.get(field.id, '') if object_values else '' %}
+                        
+                        {% if field.field_type == 'text' %}
+                            <input type="text" class="form-control" name="field_{{ field.id }}" 
+                                   value="{{ field_value }}" 
+                                   {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'number' %}
+                            <input type="number" class="form-control" name="field_{{ field.id }}" 
+                                   value="{{ field_value }}" 
+                                   {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'decimal' %}
+                            <input type="number" step="0.01" class="form-control" name="field_{{ field.id }}" 
+                                   value="{{ field_value }}" 
+                                   {% if field.is_required %}required{% endif %}>
+                        
+                        {% elif field.field_type == 'boolean' %}
+                            <select class="form-select" name="field_{{ field.id }}" 
+                                    {% if field.is_required %}required{% endif %}>
+                                <option value="">Select...</option>
+                                <option value="Yes" {% if field_value == 'Yes' %}selected{% endif %}>Yes</option>
+                                <option value="No" {% if field_value == 'No' %}selected{% endif %}>No</option>
+                            </select>
+                        
+                        {% elif field.field_type == 'rating' %}
+                            <div class="rating-input" data-rating="{{ field_value }}">
+                                {% for i in range(1, 6) %}
+                                <i class="bi bi-star rating-star" data-value="{{ i }}"></i>
+                                {% endfor %}
+                                <input type="hidden" name="field_{{ field.id }}" value="{{ field_value }}">
+                            </div>
+                        
+                        {% elif field.field_type == 'price' %}
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" step="0.01" class="form-control" name="field_{{ field.id }}" 
+                                       value="{{ field_value }}" 
+                                       {% if field.is_required %}required{% endif %}>
+                            </div>
+                        
+                        {% elif field.field_type == 'date' %}
+                            <input type="date" class="form-control" name="field_{{ field.id }}" 
+                                   value="{{ field_value }}" 
+                                   {% if field.is_required %}required{% endif %}>
+                        
+                        {% else %}
+                            <input type="text" class="form-control" name="field_{{ field.id }}" 
+                                   value="{{ field_value }}" 
+                                   {% if field.is_required %}required{% endif %}>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-end gap-3 mt-5">
+                    <a href="{{ url_for('view_analysis', analysis_id=analysis.id) }}" class="btn btn-secondary">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-gradient">
+                        <i class="bi bi-check me-1"></i>
+                        {% if mode == 'create' %}Add Object{% else %}Update Object{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/object-form.js') }}"></script>
+{% endblock %}
