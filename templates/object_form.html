@@ -23,7 +23,11 @@
 
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <form method="POST" id="objectForm" class="glass-card p-4">
+            {% if mode == 'create' %}
+            <form method="POST" action="{{ url_for('new_object', analysis_id=analysis.id) }}" id="objectForm" class="glass-card p-4">
+            {% else %}
+            <form method="POST" action="{{ url_for('edit_object', analysis_id=analysis.id, object_id=object.id) }}" id="objectForm" class="glass-card p-4">
+            {% endif %}
                 <!-- Basic Object Info -->
                 <div class="row mb-4">
                     <div class="col-md-8">

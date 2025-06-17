@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Share Analysis - {{ analysis.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ url_for('view_analysis', analysis_id=analysis.id) }}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Analysis
+                </a>
+                <h1 class="h2 mb-0">Share Analysis</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="glass-card p-4 mb-4">
+                <h4 class="gradient-text mb-3">
+                    <i class="bi bi-share me-2"></i>{{ analysis.name }}
+                </h4>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Direct Link</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="shareUrl" 
+                               value="{{ share_data.share_url }}" readonly>
+                        <button class="btn btn-outline-primary" onclick="copyToClipboard('shareUrl')">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                    </div>
+                    <small class="text-muted">Anyone with this link can view your analysis</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Embed Code</label>
+                    <div class="input-group">
+                        <textarea class="form-control" id="embedCode" rows="3" readonly>{{ share_data.embed_code }}</textarea>
+                        <button class="btn btn-outline-primary" onclick="copyToClipboard('embedCode')">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                    </div>
+                    <small class="text-muted">Embed this analysis in your website or blog</small>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-success w-100" onclick="shareViaEmail()">
+                            <i class="bi bi-envelope me-2"></i>Share via Email
+                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-info w-100" onclick="shareViaSocial()">
+                            <i class="bi bi-share-fill me-2"></i>Share on Social
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    element.select();
+    document.execCommand('copy');
+    
+    // Show success notification
+    window.comparisonHub?.showNotification('Copied to clipboard!', 'success');
+}
+
+function shareViaEmail() {
+    const subject = encodeURIComponent('Check out this comparison analysis');
+    const body = encodeURIComponent(`I thought you might be interested in this comparison analysis: {{ share_data.share_url }}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+}
+
+function shareViaSocial() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ analysis.name }}',
+            text: 'Check out this comparison analysis',
+            url: '{{ share_data.share_url }}'
+        });
+    } else {
+        copyToClipboard('shareUrl');
+    }
+}
+</script>
+{% endblock %}

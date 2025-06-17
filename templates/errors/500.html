@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - Product Comparison Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="error-page glass-card p-5">
+                <div class="error-code mb-4">
+                    <h1 class="display-1 gradient-text">500</h1>
+                </div>
+                
+                <div class="error-message mb-4">
+                    <h2 class="h3 mb-3">Server Error</h2>
+                    <p class="text-muted mb-4">
+                        Something went wrong on our server. 
+                        We're working to fix this issue. Please try again later.
+                    </p>
+                </div>
+                
+                <div class="error-actions">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-gradient me-3">
+                        <i class="bi bi-house me-1"></i>Go Home
+                    </a>
+                    <button onclick="location.reload()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

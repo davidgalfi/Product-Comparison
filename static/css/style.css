@@ -311,3 +311,172 @@
         transform: rotate(360deg);
     }
 }
+
+/* Shredder effect */
+.analysis-card.deleting-shredder {
+    animation: reduceWidth 1.7s ease-out forwards;
+    overflow: hidden;
+}
+
+.shredder-piece {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+}
+
+.shredder-piece.piece-1 {
+    animation: shredPiece1 1.4s ease-out forwards;
+}
+
+.shredder-piece.piece-2 {
+    animation: shredPiece2 1.6s ease-out forwards;
+}
+
+@keyframes reduceWidth {
+    0% {
+        width: 100%;
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        width: 0;
+        height: 0;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@keyframes shredPiece1 {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(300px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+@keyframes shredPiece2 {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(280px) rotate(-35deg);
+        opacity: 0;
+    }
+}
+
+/* Zoom delete animation */
+.analysis-card.deleting-zoom {
+    animation: zoomOut 0.7s ease-out forwards;
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(0) rotate(10deg);
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Slide fade delete animation */
+.analysis-card.deleting-slide {
+    animation: slideAway 1s ease-out forwards;
+}
+
+@keyframes slideAway {
+    0% {
+        transform: translateX(0) rotate(0deg);
+        opacity: 1;
+        height: auto;
+    }
+    25% {
+        transform: translateX(-50px) rotate(-5deg);
+        opacity: 0.8;
+    }
+    75% {
+        transform: translateX(300px) rotate(15deg);
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateX(500px) rotate(25deg);
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Fall away animation */
+.analysis-card.deleting-fall {
+    animation: fallAway 1s ease-out forwards;
+}
+
+@keyframes fallAway {
+    0% {
+        transform: rotateZ(0deg) translateY(0);
+        opacity: 1;
+    }
+    25% {
+        transform: rotateZ(-15deg) translateY(20px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: rotateZ(-45deg) translateY(300px);
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Custom modal styling to override Bootstrap */
+.delete-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10500 !important; /* Higher than Bootstrap modals */
+}
+
+.delete-confirmation-modal .modal-content {
+    border-radius: 15px !important;
+    border: none !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+}
+
+.delete-confirmation-modal .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+

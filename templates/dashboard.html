@@ -85,7 +85,7 @@
     <div class="row">
         {% for analysis in recent_analyses %}
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="analysis-card glass-card h-100 animate-card" data-delay="{{ loop.index0 * 50 }}">
+            <div class="analysis-card glass-card h-100 animate-card" data-delay="{{ loop.index0 * 50 }}" data-analysis-id="{{ analysis.id }}">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div class="category-badge">
@@ -97,10 +97,36 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-share me-2"></i>Share</a></li>
+                                <li>
+                                    <a class="dropdown-item edit-analysis-btn" 
+                                    href="{{ url_for('edit_analysis', analysis_id=analysis.id) }}" 
+                                    data-analysis-id="{{ analysis.id }}">
+                                        <i class="bi bi-pencil me-2"></i>Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item share-analysis-btn" 
+                                    href="{{ url_for('share_analysis', analysis_id=analysis.id) }}" 
+                                    data-analysis-id="{{ analysis.id }}">
+                                        <i class="bi bi-share me-2"></i>Share
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item duplicate-analysis-btn" 
+                                    href="javascript:void(0);" 
+                                    data-analysis-id="{{ analysis.id }}">
+                                        <i class="bi bi-copy me-2"></i>Duplicate
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger delete-analysis-btn" 
+                                    href="javascript:void(0);" 
+                                    data-analysis-id="{{ analysis.id }}" 
+                                    data-analysis-name="{{ analysis.name }}">
+                                        <i class="bi bi-trash me-2"></i>Delete
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -125,10 +151,14 @@
                     </div>
                     
                     <div class="card-actions">
-                        <a href="#" class="btn btn-primary btn-sm">
+                        <a href="{{ url_for('view_analysis', analysis_id=analysis.id) }}" 
+                        class="btn btn-primary btn-sm view-analysis-btn" 
+                        data-analysis-id="{{ analysis.id }}">
                             <i class="bi bi-eye me-1"></i>View Analysis
                         </a>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                        <a href="{{ url_for('new_object', analysis_id=analysis.id) }}" 
+                        class="btn btn-outline-secondary btn-sm add-item-btn" 
+                        data-analysis-id="{{ analysis.id }}">
                             <i class="bi bi-plus me-1"></i>Add Item
                         </a>
                     </div>

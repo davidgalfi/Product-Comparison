@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - Product Comparison Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="error-page glass-card p-5">
+                <div class="error-code mb-4">
+                    <h1 class="display-1 gradient-text">404</h1>
+                </div>
+                
+                <div class="error-message mb-4">
+                    <h2 class="h3 mb-3">Page Not Found</h2>
+                    <p class="text-muted mb-4">
+                        The page you're looking for doesn't exist or has been moved.
+                        Don't worry, you can find what you're looking for from our homepage.
+                    </p>
+                </div>
+                
+                <div class="error-actions">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-gradient me-3">
+                        <i class="bi bi-house me-1"></i>Go Home
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Go Back
+                    </button>
+                </div>
+                
+                <div class="error-suggestions mt-5">
+                    <h5 class="mb-3">Popular Pages</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('dashboard') }}" class="text-decoration-none">
+                                <div class="suggestion-card p-3 rounded mb-3">
+                                    <i class="bi bi-bar-chart-line text-primary me-2"></i>
+                                    Dashboard
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="#" onclick="showCreateModal()" class="text-decoration-none">
+                                <div class="suggestion-card p-3 rounded mb-3">
+                                    <i class="bi bi-plus-circle text-success me-2"></i>
+                                    Create Analysis
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
