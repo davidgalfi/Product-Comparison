@@ -1,0 +1,157 @@
+<!-- templates/dashboard.html - Dashboard with animated cards -->
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Product Comparison Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="hero-section text-center py-5">
+                <h1 class="display-4 fw-bold gradient-text mb-3 animate-fade-in">
+                    Product Comparison Hub
+                </h1>
+                <p class="lead text-muted mb-4 animate-slide-up">
+                    Create dynamic comparisons for any products with custom fields and beautiful visualizations
+                </p>
+                <button class="btn btn-primary btn-lg btn-gradient animate-bounce" onclick="showCreateModal()">
+                    <i class="bi bi-plus-circle me-2"></i>Create Your First Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="stat-card glass-card p-4 h-100 animate-card" data-delay="0">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0 counter" data-target="{{ total_analyses }}">0</h3>
+                        <p class="text-muted mb-0">Total Analyses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card glass-card p-4 h-100 animate-card" data-delay="100">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-boxes"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0 counter" data-target="{{ total_objects }}">0</h3>
+                        <p class="text-muted mb-0">Products Compared</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card glass-card p-4 h-100 animate-card" data-delay="200">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon bg-info">
+                        <i class="bi bi-tags"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0 counter" data-target="{{ categories|length }}">0</h3>
+                        <p class="text-muted mb-0">Categories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Analyses -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="gradient-text">
+                    <i class="bi bi-clock-history me-2"></i>Recent Analyses
+                </h2>
+                <button class="btn btn-outline-primary" onclick="showCreateModal()">
+                    <i class="bi bi-plus me-1"></i>New Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if recent_analyses %}
+    <div class="row">
+        {% for analysis in recent_analyses %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="analysis-card glass-card h-100 animate-card" data-delay="{{ loop.index0 * 50 }}">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="category-badge">
+                            <i class="bi bi-tag me-1"></i>
+                            {{ analysis.category or 'Uncategorized' }}
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link btn-sm text-muted" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-share me-2"></i>Share</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h5 class="card-title mb-2">{{ analysis.name }}</h5>
+                    
+                    {% if analysis.description %}
+                    <p class="card-text text-muted mb-3">{{ analysis.description[:100] }}{% if analysis.description|length > 100 %}...{% endif %}</p>
+                    {% endif %}
+                    
+                    <div class="analysis-stats mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="stat-item">
+                                <i class="bi bi-box text-primary me-1"></i>
+                                <small>{{ analysis.object_count }} items</small>
+                            </span>
+                            <span class="stat-item">
+                                <i class="bi bi-calendar3 text-muted me-1"></i>
+                                <small>{{ analysis.created_at[:10] }}</small>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="bi bi-eye me-1"></i>View Analysis
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-plus me-1"></i>Add Item
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="empty-state glass-card p-5 text-center">
+                <div class="empty-icon mb-4">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+                <h3 class="mb-3">No Analyses Yet</h3>
+                <p class="text-muted mb-4">Create your first comparison analysis to get started!</p>
+                <button class="btn btn-primary btn-gradient" onclick="showCreateModal()">
+                    <i class="bi bi-plus-circle me-2"></i>Create Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
