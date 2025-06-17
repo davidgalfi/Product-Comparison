@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Setup - {{ analysis.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center mb-3">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+                <div>
+                    <h1 class="h2 mb-0">{{ analysis.name }}</h1>
+                    <p class="text-muted mb-0">{{ analysis.category }}</p>
+                </div>
+            </div>
+            
+            {% if analysis.description %}
+            <p class="lead">{{ analysis.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="row mb-5">
+        <div class="col">
+            <div class="progress-steps">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Define Fields</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Add Objects</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Compare & Analyze</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Field Definition Form -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 sticky-top">
+                <h3 class="gradient-text mb-4">
+                    <i class="bi bi-plus-circle me-2"></i>Add Custom Field
+                </h3>
+                
+                <form id="fieldForm">
+                    <div class="mb-3 floating-label">
+                        <input type="text" class="form-control" id="fieldName" name="field_name" required>
+                        <label for="fieldName">Field Name</label>
+                    </div>
+                    
+                    <div class="mb-3 floating-label">
+                        <select class="form-select" id="fieldType" name="field_type" required>
+                            {% for value, label in field_types.items() %}
+                            <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="fieldType">Field Type</label>
+                    </div>
+                    
+                    <div class="mb-3 floating-label" id="unitSection" style="display: none;">
+                        <input type="text" class="form-control" id="fieldUnit" name="field_unit">
+                        <label for="fieldUnit">Unit (e.g., inches, GB, Hz)</label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="isRequired" name="is_required">
+                        <label class="form-check-label" for="isRequired">
+                            Required field
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-gradient w-100">
+                        <i class="bi bi-plus me-1"></i>Add Field
+                    </button>
+                </form>
+                
+                <!-- Field Suggestions -->
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">Suggested fields for {{ analysis.category }}:</h6>
+                    <div id="fieldSuggestions" class="field-suggestions"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current Fields -->
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="gradient-text">
+                    <i class="bi bi-list-ul me-2"></i>Current Fields
+                </h3>
+                {% if fields %}
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" id="previewBtn">
+                        <i class="bi bi-eye me-1"></i>Preview Form
+                    </button>
+                    <a href="{{ url_for('new_object', analysis_id=analysis.id) }}" class="btn btn-success">
+                        <i class="bi bi-plus me-1"></i>Add First Object
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if fields %}
+            <div id="fieldsList" class="fields-list">
+                {% for field in fields %}
+                <div class="field-item glass-card p-3 mb-3" data-field-id="{{ field.id }}">
+                    <div class="d-flex align-items-center">
+                        <div class="drag-handle me-3">
+                            <i class="bi bi-grip-vertical text-muted"></i>
+                        </div>
+                        
+                        <div class="field-info flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <h5 class="mb-0 me-2">{{ field.field_name }}</h5>
+                                {% if field.is_required %}
+                                <span class="badge bg-danger">Required</span>
+                                {% endif %}
+                                {% if field.field_unit %}
+                                <span class="badge bg-info ms-1">{{ field.field_unit }}</span>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-gear me-1"></i>{{ field_types[field.field_type] }}
+                            </small>
+                        </div>
+                        
+                        <div class="field-actions">
+                            <button class="btn btn-outline-primary btn-sm me-1" 
+                                    onclick="editField({{ field.id }})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" 
+                                    onclick="deleteField({{ field.id }})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state glass-card p-5 text-center">
+                <div class="empty-icon mb-4">
+                    <i class="bi bi-list-ul"></i>
+                </div>
+                <h4 class="mb-3">No Fields Defined</h4>
+                <p class="text-muted mb-4">
+                    Start by adding custom fields that describe the properties you want to compare.
+                    For example, for monitors you might add: Brand, Size, Resolution, Refresh Rate, etc.
+                </p>
+                <div class="suggested-fields">
+                    <h6 class="text-muted mb-3">Quick start suggestions:</h6>
+                    <div id="quickSuggestions"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content glass-card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title gradient-text">
+                    <i class="bi bi-eye me-2"></i>Form Preview
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="formPreview"></div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('new_object', analysis_id=analysis.id) }}" class="btn btn-primary btn-gradient">
+                    <i class="bi bi-plus me-1"></i>Add Object
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/analysis-setup.js') }}"></script>
+{% endblock %}
